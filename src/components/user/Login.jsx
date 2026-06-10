@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { GraduationCap, Mail, Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
-
-export default function Login() {
+import { useNavigate } from 'react-router-dom';
+export default function Login({ setIsAuthenticated }) {
   const [formData, setFormData] = useState({
     emailAddress: '',
     password: ''
   });
-
+  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [statusMsg, setStatusMsg] = useState(null);
@@ -26,8 +26,20 @@ export default function Login() {
       // Simulating real Express API network validation latency
       await new Promise((resolve) => setTimeout(resolve, 500));
       
+      
+      //demo go to dashboard page on successful login
+
+
+
+      // In a real application, you would handle the response and redirect accordingly      
+      // Mock validation logic (replace with actual API call and response handling)
+      
+
       // Mock Response Success condition check
+      setIsAuthenticated(true); // Flip state to true
+
       setStatusMsg({ success: true, text: "🎉 Secure Authentication Successful! Redirecting..." });
+      navigate('/dashboard');
       
       /* FUTURE NODE/EXPRESS JWT IMPLEMENTATION:
       const response = await fetch('http://localhost:5000/api/auth/login', {
