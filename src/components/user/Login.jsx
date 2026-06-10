@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { GraduationCap, Mail, Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { GraduationCap, Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { apiService } from '../../services/api';
+
 export default function Login({ setIsAuthenticated }) {
   const [formData, setFormData] = useState({
     emailAddress: '',
@@ -23,37 +25,18 @@ export default function Login({ setIsAuthenticated }) {
     setStatusMsg(null);
 
     try {
-      // Simulating real Express API network validation latency
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Call API to authenticate user
+      const response = await apiService.loginUser(formData.emailAddress, formData.password);
       
-      
-      //demo go to dashboard page on successful login
-
-
-
-      // In a real application, you would handle the response and redirect accordingly      
-      // Mock validation logic (replace with actual API call and response handling)
-      
-
-      // Mock Response Success condition check
-      setIsAuthenticated(true); // Flip state to true
-
-      setStatusMsg({ success: true, text: "🎉 Secure Authentication Successful! Redirecting..." });
-      navigate('/dashboard');
-      
-      /* FUTURE NODE/EXPRESS JWT IMPLEMENTATION:
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      const data = await response.json();
-      if (response.ok) {
-        localStorage.setItem('token', data.token); // Save your JWT token
+      if (response.success) {
+        setIsAuthenticated(true);
+        setStatusMsg({ success: true, text: "🎉 Secure Authentication Successful! Redirecting..." });
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 800);
       }
-      */
-    } catch (err) {
-      setStatusMsg({ success: false, text: "❌ Invalid credential matching records." });
+    } catch (error) {
+      setStatusMsg({ success: false, text: "❌ " + (error.message || "Invalid email or password") });
     } finally {
       setSubmitting(false);
     }
@@ -101,8 +84,8 @@ export default function Login({ setIsAuthenticated }) {
                 <a href="#" className="text-xs text-[#0066ff] font-semibold hover:underline">Forgot Password?</a>
               </div>
               <div className="relative">
-                <Shield className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input 
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
                   required 
                   type={showPass ? "text" : "password"} 
                   name="password" 

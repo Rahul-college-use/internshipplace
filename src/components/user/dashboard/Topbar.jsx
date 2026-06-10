@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Bell, ChevronDown, AlertCircle, LogOut, User, Settings } from 'lucide-react';
+import { useState } from 'react';
+import { Bell, ChevronDown, LogOut, User, Settings, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Topbar({ setIsAuthenticated }) {

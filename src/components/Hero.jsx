@@ -1,4 +1,3 @@
-import React from 'react';
 import { Clock, CheckCircle, QrCode, Users, FileText, Search, Briefcase, Award } from 'lucide-react';
 
 export default function Hero() {

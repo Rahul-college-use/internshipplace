@@ -1,4 +1,3 @@
-import React from 'react';
 import { 
   LayoutDashboard, User, GraduationCap, Calendar, FileText, 
   BookOpen, HelpCircle, FileCheck, Shield, Award, Users, Bell, Headphones 
@@ -22,13 +21,13 @@ export default function Sidebar({ activeTab, setActiveTab }) {
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-slate-100 flex flex-col h-full shrink-0 select-none">
+    <aside className="w-16 sm:w-64 bg-white border-r border-slate-100 flex flex-col h-full shrink-0 select-none transition-all duration-200">
       {/* Brand Identity Branding Header wrapper */}
-      <div className="h-20 flex items-center px-6 border-b border-slate-50 gap-2">
-        <div className="w-8 h-8 bg-[#0066ff] rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
+      <div className="h-20 flex items-center justify-center sm:justify-start px-4 sm:px-6 border-b border-slate-50 gap-2">
+        <div className="w-8 h-8 bg-[#0066ff] rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm shrink-0">
           <GraduationCap className="w-5 h-5 text-white" />
         </div>
-        <div>
+        <div className="hidden sm:block">
           <div className="text-sm font-black text-slate-900 tracking-tight">
             Internship <span className="text-[#ff9900]">Place</span>
           </div>
@@ -37,25 +36,26 @@ export default function Sidebar({ activeTab, setActiveTab }) {
       </div>
 
       {/* Navigation List links context */}
-      <nav className="flex-grow py-6 px-4 space-y-1 overflow-y-auto max-h-[calc(100vh-16rem)] custom-scrollbar">
+      <nav className="flex-grow py-6 px-2 sm:px-4 space-y-1 overflow-y-auto max-h-[calc(100vh-16rem)] custom-scrollbar">
         {menuItems.map((item) => {
           const isActive = activeTab === item.id;
           return (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition ${
+              title={item.label} /* Tooltip on hover for small screens */
+              className={`w-full flex items-center justify-center sm:justify-between p-2.5 sm:px-3 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition relative ${
                 isActive 
                   ? 'bg-blue-50 text-[#0066ff]' 
                   : 'text-slate-500 hover:bg-slate-50/80 hover:text-slate-800'
               }`}
             >
               <div className="flex items-center gap-3">
-                {item.icon}
-                <span>{item.label}</span>
+                <span className="shrink-0">{item.icon}</span>
+                <span className="hidden sm:block">{item.label}</span>
               </div>
               {item.badge && (
-                <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+                <span className="absolute top-2 right-2 sm:static w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
               )}
             </button>
           );
@@ -63,8 +63,9 @@ export default function Sidebar({ activeTab, setActiveTab }) {
       </nav>
 
       {/* Need Help CTA bottom block card float */}
-      <div className="p-4 border-t border-slate-50">
-        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col items-center text-center space-y-3">
+      <div className="p-2 sm:p-4 border-t border-slate-50">
+        {/* Hidden on mobile, shows on desktop */}
+        <div className="hidden sm:flex bg-slate-50 p-4 rounded-2xl border border-slate-100 flex-col items-center text-center space-y-3">
           <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-sm text-[#0066ff]">
             <Headphones className="w-4 h-4" />
           </div>
@@ -74,6 +75,16 @@ export default function Sidebar({ activeTab, setActiveTab }) {
           </div>
           <button className="w-full bg-[#0066ff] hover:bg-blue-700 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm">
             Contact Support →
+          </button>
+        </div>
+
+        {/* Minimal Support Icon for mobile */}
+        <div className="block sm:hidden flex justify-center">
+          <button 
+            title="Support" 
+            className="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 flex items-center justify-center text-[#0066ff] transition"
+          >
+            <Headphones className="w-4 h-4" />
           </button>
         </div>
       </div>

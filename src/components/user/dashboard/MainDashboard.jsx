@@ -1,77 +1,131 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { 
-  Calendar, BarChart2, CheckCircle, FileText, Download, 
-  HelpCircle, Award, Eye, FileUp, Check, ShieldAlert, ArrowRight, BookOpen, Presentation, Folder, Layers
+  Calendar, BarChart2, FileText, Download, 
+  Award, Eye, FileUp, Check, ArrowRight, BookOpen, Presentation, Folder, Layers, Loader
 } from 'lucide-react';
 import StatCard from './StatCard';
+import { apiService } from '../../../services/api';
 
 export default function MainDashboard() {
-  const docsData = [
-    { title: "Offer Letter", desc: "Download your official offer letter", type: "download" },
-    { title: "Fee Receipt", desc: "Download your payment receipt", type: "download" },
-    { title: "Daily Log Book", desc: "Fill your daily activities and tasks", type: "fill" },
-    { title: "Report File", desc: "Download format & upload your report", type: "upload" },
-    { title: "Attendance Sheet", desc: "View and download your attendance sheet", type: "download" },
-    { title: "Viva Questions", desc: "Important viva questions for your preparation", type: "view" },
-    { title: "Assessment / Marksheet", desc: "View your assessment marks and feedback", type: "view" },
-    { title: "Certificate", desc: "Download your internship certificate", type: "download" }
-  ];
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserDashboard = async () => {
+      try {
+        setLoading(true);
+        const user = apiService.getStoredUser();
+        
+        if (!user || !user.id) {
+          setError("User not logged in. Please login again.");
+          return;
+        }
+
+        const data = await apiService.getUserDashboardData(user.id);
+        setDashboardData(data);
+      } catch (err) {
+        setError(err.message || "Failed to load dashboard data");
+        console.error("Dashboard data fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserDashboard();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <Loader className="w-12 h-12 text-[#0066ff] animate-spin mx-auto" />
+          <p className="text-slate-600 font-medium">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-full flex items-center justify-center p-4">
+        <div className="text-center space-y-3 bg-red-50 border border-red-200 rounded-2xl p-8 max-w-md">
+          <p className="text-red-600 font-bold text-sm">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!dashboardData) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p className="text-slate-400 font-medium">No dashboard data available</p>
+      </div>
+    );
+  }
+
+  const docsData = dashboardData.documents || [];
 
   return (
-    <div className="space-y-6 max-h-[calc(100vh-5rem)] overflow-y-auto p-6 lg:p-8 custom-scrollbar box-border">
-      
+    <div className="w-full h-full overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 custom-scrollbar">
       {/* HEADER HERO ROW SUMMARY BANNER */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-xl shadow-blue-500/5 text-white grid grid-cols-1 md:grid-cols-3 items-center gap-6">
-        <div className="md:col-span-2 space-y-4">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-5 sm:p-8 relative overflow-hidden shadow-xl shadow-blue-500/5 text-white flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-4 flex-1">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-blue-100 bg-white/10 px-3 py-1 rounded-full backdrop-blur-md">👋 Welcome back,</span>
-            <h2 className="text-2xl sm:text-3xl font-black mt-2 tracking-tight">Amit Kumar!</h2>
-            <p className="text-blue-100 text-xs sm:text-sm font-medium mt-1">Civil Engineering Internship Program</p>
+            <h2 className="text-2xl sm:text-3xl font-black mt-2 tracking-tight">{dashboardData.studentName}!</h2>
+            <p className="text-blue-100 text-xs sm:text-sm font-medium mt-1">{dashboardData.department} Internship Program</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3 text-xs">
-            <div className="bg-white/10 px-4 py-2 rounded-xl backdrop-blur-md flex items-center gap-2 border border-white/5">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 text-xs">
+            <div className="bg-white/10 px-4 py-2 rounded-xl backdrop-blur-md flex items-center justify-between sm:justify-start gap-2 border border-white/5">
               <span className="text-blue-200 font-bold uppercase tracking-wider text-[10px]">Internship ID</span>
-              <span className="font-bold">IP-CE-2026-00125</span>
+              <span className="font-bold">{dashboardData.studentId}</span>
             </div>
-            <div className="bg-white/10 px-4 py-2 rounded-xl backdrop-blur-md flex items-center gap-2 border border-white/5">
+            <div className="bg-white/10 px-4 py-2 rounded-xl backdrop-blur-md flex items-center justify-between sm:justify-start gap-2 border border-white/5">
               <span className="text-blue-200 font-bold uppercase tracking-wider text-[10px]">Duration</span>
-              <span className="font-bold">01 Feb 2026 - 30 May 2026</span>
+              <span className="font-bold text-right sm:text-left">{dashboardData.durationStart} - {dashboardData.durationEnd}</span>
             </div>
           </div>
         </div>
         
         {/* Progress Circle Card Box Wrapper */}
-        <div className="bg-white rounded-2xl p-5 text-slate-800 flex items-center justify-between border border-white/10 shadow-lg">
+        <div className="bg-white rounded-2xl p-4 sm:p-5 text-slate-800 flex items-center justify-between border border-white/10 shadow-lg min-w-full md:min-w-[280px] lg:min-w-[320px]">
           <div className="space-y-1">
             <span className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Overall Progress</span>
             <span className="block text-xs font-bold text-slate-500 pt-1">Days Completed</span>
-            <span className="block text-base font-black text-slate-900">55 / 70 Days</span>
-            <span className="block text-[11px] font-bold text-emerald-500 mt-2 bg-emerald-50 px-2 py-0.5 rounded-md w-max">Certificate Eligible</span>
+            <span className="block text-base font-black text-slate-900">{dashboardData.totalDaysCompleted} / {dashboardData.totalDays} Days</span>
+            <span className={`block text-[11px] font-bold mt-2 px-2 py-0.5 rounded-md w-max ${
+              dashboardData.certificateStatus === 'Eligible' 
+                ? 'text-emerald-500 bg-emerald-50' 
+                : 'text-amber-500 bg-amber-50'
+            }`}>
+              {dashboardData.certificateStatus === 'Eligible' ? '✓ Certificate Eligible' : 'Certificate ' + dashboardData.certificateStatus}
+            </span>
           </div>
           {/* Progress Indicator Circle */}
-          <div className="relative w-20 h-20 flex items-center justify-center">
+          <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center shrink-0">
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
               <path className="text-slate-100" strokeWidth="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-              <path className="text-blue-600" strokeDasharray="78, 100" strokeWidth="3" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path className="text-blue-600" strokeDasharray={`${(dashboardData.progressPercentage / 100) * 100}, 100`} strokeWidth="3" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
             </svg>
-            <span className="absolute text-sm font-black text-slate-900">78%</span>
+            <span className="absolute text-xs sm:text-sm font-black text-slate-900">{dashboardData.progressPercentage}%</span>
           </div>
         </div>
       </div>
 
       {/* CORE FOUR APP METRIC STAT GRID ROW */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Attendance" value="92%" subtext="52 / 56 Days Present" icon={<Calendar className="w-5 h-5 text-emerald-500" />} />
-        <StatCard title="Internship Progress" value="78%" subtext="Tasks & Modules Completed" icon={<BarChart2 className="w-5 h-5 text-blue-500" />} />
-        <StatCard title="Report Status" value="Submitted" subtext="Final Report Verified" icon={<FileText className="w-5 h-5 text-orange-500" />} actionIcon={<Check className="w-3.5 h-3.5 text-white" />} statusColor="bg-emerald-500" />
-        <StatCard title="Certificate Status" value="Eligible" subtext="All requirements completed" icon={<Award className="w-5 h-5 text-purple-500" />} actionIcon={<Check className="w-3.5 h-3.5 text-white" />} statusColor="bg-emerald-500" />
+        <StatCard title="Attendance" value={dashboardData.attendancePercentage + "%"} subtext={dashboardData.attendanceDays} icon={<Calendar className="w-5 h-5 text-emerald-500" />} />
+        <StatCard title="Internship Progress" value={dashboardData.progressPercentage + "%"} subtext="Tasks & Modules Completed" icon={<BarChart2 className="w-5 h-5 text-blue-500" />} />
+        <StatCard title="Report Status" value={dashboardData.reportStatus} subtext={dashboardData.reportStatus === 'Submitted' ? 'Final Report Verified' : 'Awaiting submission'} icon={<FileText className="w-5 h-5 text-orange-500" />} actionIcon={dashboardData.reportStatus === 'Submitted' ? <Check className="w-3.5 h-3.5 text-white" /> : null} statusColor={dashboardData.reportStatus === 'Submitted' ? "bg-emerald-500" : "bg-slate-400"} />
+        <StatCard title="Certificate Status" value={dashboardData.certificateStatus} subtext="All requirements" icon={<Award className="w-5 h-5 text-purple-500" />} actionIcon={dashboardData.certificateStatus === 'Eligible' ? <Check className="w-3.5 h-3.5 text-white" /> : null} statusColor={dashboardData.certificateStatus === 'Eligible' ? "bg-emerald-500" : "bg-amber-500"} />
       </div>
 
       {/* LOWER GRID COMBINED ROW CONTENT PANELS */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Left Double-Column Block: Important Documents Container */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-4 order-1">
           <div className="flex items-center justify-between">
             <h4 className="text-base font-black text-slate-900 tracking-tight">Important Documents</h4>
             <button className="text-[#0066ff] text-xs font-bold hover:underline">View All</button>
@@ -112,7 +166,7 @@ export default function MainDashboard() {
         </div>
 
         {/* Right Single-Column Sidebar Block: Actions & Learning Resources Panel */}
-        <div className="space-y-6">
+        <div className="space-y-6 order-2 lg:order-2">
           
           {/* Box 1: Quick Operational Action Links */}
           <div className="space-y-4">
@@ -125,11 +179,11 @@ export default function MainDashboard() {
                 { name: "Raise Support Ticket", desc: "Get help from tech support team" }
               ].map((act, i) => (
                 <button key={i} className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition text-left group">
-                  <div>
+                  <div className="pr-2">
                     <span className="block text-xs sm:text-sm font-bold text-slate-800 group-hover:text-[#0066ff] transition">{act.name}</span>
                     <span className="block text-[11px] text-slate-400 font-medium mt-0.5">{act.desc}</span>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-[#0066ff] group-hover:translate-x-1 transition" />
+                  <ArrowRight className="w-4 h-4 text-slate-300 shrink-0 group-hover:text-[#0066ff] group-hover:translate-x-1 transition" />
                 </button>
               ))}
             </div>
@@ -148,11 +202,11 @@ export default function MainDashboard() {
                 { title: "Project Files", icon: <Folder className="w-4 h-4" />, color: "bg-blue-50 text-[#0066ff]" },
                 { title: "Assignments", icon: <Layers className="w-4 h-4" />, color: "bg-indigo-50 text-indigo-600" }
               ].map((res, idx) => (
-                <div key={idx} className="bg-white p-3.5 rounded-xl border border-slate-100 shadow-sm flex flex-col gap-3 hover:border-blue-500/10 cursor-pointer transition select-none">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${res.color}`}>
+                <div key={idx} className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex flex-col gap-3 hover:border-blue-500/10 cursor-pointer transition select-none">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${res.color}`}>
                     {res.icon}
                   </div>
-                  <span className="font-extrabold text-slate-950 text-xs tracking-tight">{res.title}</span>
+                  <span className="font-extrabold text-slate-950 text-xs tracking-tight truncate">{res.title}</span>
                 </div>
               ))}
             </div>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Clock, CheckCircle, QrCode, Users, FileText, ArrowUpRight } from 'lucide-react';
 
 export default function Features() {

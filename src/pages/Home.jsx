@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 // Component layout imports from one directory level up
 import Hero from '../components/Hero';

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Landmark, User, Mail, Phone, Shield, ShieldAlert, Loader2, Eye, EyeOff } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { apiService } from '../../services/api';
 
 export default function Register() {
@@ -44,23 +44,29 @@ export default function Register() {
 
   // Cascading Rule: Refetch Colleges when University OR Degree Category updates
   useEffect(() => {
-    if (!formData.universityId || !formData.degreeCategory) {
-      setColleges([]);
-      return;
-    }
+    let isMounted = true;
+    
     const syncColleges = async () => {
+      if (!formData.universityId || !formData.degreeCategory) {
+        if (isMounted) setColleges([]);
+        return;
+      }
       setLoadingColleges(true);
       try {
         const list = await apiService.getFilteredColleges(formData.universityId, formData.degreeCategory);
-        setColleges(list);
-        setFormData(prev => ({ ...prev, collegeId: '' })); // reset child select option
+        if (isMounted) {
+          setColleges(list);
+          setFormData(prev => ({ ...prev, collegeId: '' }));
+        }
       } catch (err) {
         console.error(err);
       } finally {
-        setLoadingColleges(false);
+        if (isMounted) setLoadingColleges(false);
       }
     };
     syncColleges();
+    
+    return () => { isMounted = false; };
   }, [formData.universityId, formData.degreeCategory]);
 
   // Sync Departments when Category Updates
@@ -105,7 +111,7 @@ export default function Register() {
     await new Promise((resolve) => setTimeout(resolve, 800));
     setStatusMsg({ success: true, text: "🎉 Account initialized! (Payment simulation passed)" });
     
-  } catch (err) {
+  } catch {
     setStatusMsg({ success: false, text: "Registration pipeline dropped." });
   } finally {
     setSubmitting(false);

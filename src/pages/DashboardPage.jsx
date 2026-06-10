@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Sidebar from '../components/user/dashboard/Sidebar';
 import Topbar from '../components/user/dashboard/Topbar'; // <-- 1. Import Topbar
 import MainDashboard from '../components/user/dashboard/MainDashboard';
-import { ChevronDown, AlertCircle } from 'lucide-react';
 
 export default function DashboardPage({ setIsAuthenticated }) {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -21,16 +20,15 @@ export default function DashboardPage({ setIsAuthenticated }) {
         <Topbar setIsAuthenticated={setIsAuthenticated} />
         
 
-        {/* Dynamic Inner Tab View Router Switch */}
-        <div className="flex-grow bg-slate-50/40">
-          {activeTab === 'dashboard' ? (
-            <MainDashboard />
-          ) : (
-            <div className="flex items-center justify-center h-full text-slate-400 font-medium text-sm">
-              Section content for tracking path row "{activeTab}" is initializing...
-            </div>
-          )}
+    <div className="flex-grow bg-slate-50/40 overflow-hidden">
+      {activeTab === 'dashboard' ? (
+        <MainDashboard />
+      ) : (
+        <div className="flex items-center justify-center h-full text-slate-400 font-medium text-sm">
+          Section content for tracking path row "{activeTab}" is initializing...
         </div>
+      )}
+    </div>
 
       </div>
     </div>
