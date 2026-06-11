@@ -10,12 +10,20 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Register from './components/user/Register';
 import Login from './components/user/Login';
-import DashboardPage from './pages/DashboardPage';
+
 
 /**
  * 1. PROTECTED ROUTE COMPONENT
+ * 
  * Checks if a token exists. If not, redirects to login instantly.
- */
+*/
+//protected component to check if user is authenticated before allowing access to dashboard routes
+import DashboardPage from './pages/DashboardPage';
+
+
+
+
+
 function ProtectedRoute({ isAuthenticated, children }) {
   if (!isAuthenticated) {
     // Redirect unauthenticated users to login, saving their intended location
@@ -30,7 +38,7 @@ function ProtectedRoute({ isAuthenticated, children }) {
  */
 function AppContent() {
   const location = useLocation();
-  
+
   // Simulated Authentication State (Future implementation: check localStorage.getItem('token'))
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -39,7 +47,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-white font-sans text-slate-800 antialiased flex flex-col">
-      
+
       {/* Public Headers: Hide when browsing the premium dashboard interface */}
       {!isDashboardView && (
         <div className="w-full z-50 sticky top-0 flex flex-col">
@@ -57,13 +65,14 @@ function AppContent() {
           <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
 
           {/* Secure Private Workspace Route */}
-          <Route 
-            path="/dashboard/*" 
+          <Route
+            path="/dashboard/*"
             element={
               <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <DashboardPage />
               </ProtectedRoute>
-            } 
+
+            }
           />
 
           {/* Catch-all Fallback Redirect */}

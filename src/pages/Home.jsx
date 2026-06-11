@@ -9,6 +9,13 @@ import ProgramCard from '../components/ProgramCard';
 import { apiService } from '../services/api';
 
 export default function Home() {
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top on component mount for better UX
+  }, []);
+
+  // State management for dynamic program tracks rendering
+
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

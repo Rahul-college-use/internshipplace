@@ -52,7 +52,7 @@ export default function Navbar() {
             <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4 box-border">
 
                 {/* Logo Container */}
-                <div onClick={() => navigate('/')} className="flex items-center gap-2 cursor-pointer shrink-0">
+                <div onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }); navigate('/'); }} className="flex items-center gap-2 cursor-pointer shrink-0">
                     <div className="w-10 h-10 bg-[#0066ff] rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-md shadow-blue-200 shrink-0">
                         <GraduationCap className="w-6 h-6 text-white" />
                     </div>

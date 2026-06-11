@@ -1,10 +1,17 @@
-import { useState } from 'react';
+import { useState , useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import { GraduationCap, Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../../services/api';
 
 export default function Login({ setIsAuthenticated }) {
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top on component mount for better UX
+
+  }, []);
+
+
   const [formData, setFormData] = useState({
     emailAddress: '',
     password: ''
@@ -43,8 +50,8 @@ export default function Login({ setIsAuthenticated }) {
   };
 
   return (
-    <div className="bg-slate-50 py-16 min-h-[calc(100vh-5rem)] flex flex-col justify-center items-center font-sans antialiased">
-      <div className="w-full max-w-md px-4">
+    <div className="bg-slate-50  py-16 min-h-[calc(100vh-5rem)] flex flex-col justify-center items-center font-sans antialiased">
+      <div className="w-full max-w-4xl px-4">
         
         {/* Main Card Frame Box */}
         <div className="bg-white rounded-2xl border border-slate-100 p-6 sm:p-10 shadow-xl relative overflow-hidden">
@@ -138,9 +145,9 @@ export default function Login({ setIsAuthenticated }) {
             <div className="text-center pt-3 border-t border-slate-100">
               <span className="text-xs text-slate-400 font-medium">
                 New to the platform?{' '}
-                <Link to="/register" className="text-[#ff9900] font-bold hover:underline">
+                <button onClick={() => navigate('/register')} className="text-[#ff9900] font-bold hover:underline">
                   Create an account here
-                </Link>
+                </button>
               </span>
             </div>
 

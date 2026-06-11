@@ -73,7 +73,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
             <h5 className="text-xs font-bold text-slate-900">Need Help?</h5>
             <p className="text-[10px] text-slate-400 font-medium mt-0.5">Our support team is here to help you.</p>
           </div>
-          <button className="w-full bg-[#0066ff] hover:bg-blue-700 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm">
+          <button onClick={() => setActiveTab('support')} className="w-full bg-[#0066ff] hover:bg-blue-700 text-white font-bold py-2 rounded-xl text-xs transition shadow-sm">
             Contact Support →
           </button>
         </div>
