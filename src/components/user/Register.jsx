@@ -1,16 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { apiService } from '../../services/api';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
-  useEffect(()=>{
-    window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top on component mount for better UX
-
-  },[])
-  const navigate = useNavigate();
-
   // Master Form State
   const [formData, setFormData] = useState({
     fullName: '', gender: 'Male', parentName: '', contactNumber: '', emailAddress: '',
@@ -348,9 +340,7 @@ export default function Register() {
 
           <div className="text-center pt-2">
             <span className="text-xs text-slate-400 font-medium">
-              Already have an account? <button onClick={() =>  navigate('/login')
-                 
-                 } className="text-[#0066ff] font-bold hover:underline ">Sign in here</button>
+              Already have an account? <a href="#" className="text-[#0066ff] font-bold hover:underline">Sign in here</a>
             </span>
           </div>
 
